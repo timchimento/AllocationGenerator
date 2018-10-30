@@ -1,5 +1,52 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
+
+
+
+.styleName {
+    cursor: default;
+    font-size: 13pt;
+    font-family: Arial;
+    color: #3f3f3f;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-left: 12px;
+}
+
+.styleDepEmpId {
+    font-size: 8pt;
+    color: #3f3f3f;
+    height: 15px;
+    padding-left: 12px;
+}
+
+.styleCurAll {
+    color: red;
+    font-size: 10pt;
+    padding-left: 12px;
+    padding-bottom: 5px;
+}
+
+.name_emplid
+{
+    font-size:large;
+    font-weight:bold;
+}
+
+.ui-menu .ui-menu-item a:hover {
+    background-color:whitesmoke;
+
+}
+
+.ui-menu .ui-menu-item a {
+    color: #96f226;
+    border-radius: 1px;
+    border: 1px solid whitesmoke;
+    background-color: white;
+}
+
+
+
 body {
     padding-top: 50px;
     padding-bottom: 20px;

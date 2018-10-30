@@ -1,0 +1,158 @@
+﻿@model AllocationGenerator.Models.AllocationStaff
+
+@{
+    ViewData["Title"] = "Add Allocation Staff";
+}
+
+<br />
+<h2>Add Allocation Staff</h2>
+<hr />
+
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+
+            <div class="form-group">
+                <label for="tags">Find Employee: </label>
+                <input type="text" class="form-control" autocomplete="off" ID="txtStaffSearch" />
+            </div>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group" style="display:none">
+                <label asp-for="Emplid" class="control-label"></label>
+                <input asp-for="Emplid" id="ctrlemplid" class="form-control" />
+                <span asp-validation-for="Emplid" class="text-danger"></span>
+            </div>
+
+            <div style="display:none" id="empl_selection">
+                <div class="form-group">
+                    <label class="name_emplid" id="fullname"></label><br />
+                    <label class="name_emplid" id="emplid"></label>
+                </div>
+
+            </div>
+
+            <div class="form-group" style="display:none" id="hours_selection">
+                <label asp-for="HourstoAllocate" class="control-label">Hours to Allocate</label>
+                <input asp-for="HourstoAllocate" class="form-control" />
+                <span asp-validation-for="HourstoAllocate" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="display:none" id="effectivedate_selection">
+                <label asp-for="EffectiveDate" class="control-label">Effective Date</label>
+                <input asp-for="EffectiveDate" type="text" id="ctrleffectivedate" autocomplete="off" class="form-control" />
+                <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+
+            </div>
+            <div class="form-group" style="display:none" id="expirationdate_selection">
+                <label asp-for="ExpirationDate" class="control-label">Expiration Date</label>
+                <input asp-for="ExpirationDate" type="text" id="ctrlexpirationdate" autocomplete="off" class="form-control" />
+                <span asp-validation-for="ExpirationDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="display:none" id="create_div">
+                <input type="submit" value="Add" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href='javascript:history.go(-1)'>Back</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+       
+
+        $(document).ready(function () {
+            $("#txtStaffSearch").autocomplete({
+                source: function (request, response) {
+                    $.getJSON("/AllocationStaffs/StaffSearch", request, function (data) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                firstname: item.firstname,
+                                lastname: item.lastname,
+                                emplid: item.emplid,
+                                deptid: item.deptid,
+                                expirationdate: item.expirationdate,
+                                insertdate: item.insertdate
+                            }
+                        }))
+                    })
+                },
+                select: function (event, ui) {
+                    // this is for when select autocomplete item
+
+                    if (ui.item.expirationdate != null) {
+
+                        var fullname = ui.item.firstname.trim() + ' ' + ui.item.lastname.trim();
+                        var emplid = ui.item.emplid.trim();
+
+                        $("#empl_selection").css("display", "block");
+                        $("#hours_selection").css("display", "block");
+                        $("#effectivedate_selection").css("display", "block");
+                        $("#expirationdate_selection").css("display", "block");
+                        $("#create_div").css("display", "block");
+
+
+                        $('#fullname').html(fullname + ' | ' + emplid);
+
+                        $('#ctrlemplid').val(emplid);
+
+                    }
+                    else {
+
+                        $("#empl_selection").css("display", "none");
+                        $("#hours_selection").css("display", "none");
+                        $("#effectivedate_selection").css("display", "none");
+                        $("#expirationdate_selection").css("display", "none");
+                        $("#create_div").css("display", "none");
+                      
+                    }
+                },
+            }).data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                // here return item for autocomplete text box, Here is the place
+                // where we can modify data as we want to show as autocomplete item
+
+                var expdate = null;
+                var currentdate = new Date(); 
+                var employeename = item.lastname.trim() + ", " + item.firstname;
+                var emplid = item.emplid;
+                var deptid = item.deptid;
+
+                if (item.expirationdate == null) {
+                    expdate = null;
+                }
+                else {
+                    expdate = new Date(item.expirationdate);
+                }
+
+                if (expdate == null || expdate > currentdate) {
+
+                    return $("<li>").append("<a class='list-group-item' style=cursor:default><div class='styleName'>" + employeename + "</div>"
+                        + "<div class='styleDepEmpId'>Employee Id: " + emplid + "<br>Department Id: " + deptid + "</div><br>" +
+                        "<div class='styleCurAll'><b>Current Allocation</b></div></div>").appendTo(ul);
+                }
+                else {
+
+                    return $("<li>").append("<a class='list-group-item'><div class='styleName' style=cursor:pointer>" + employeename + "</div>"
+                        + "<div class='styleDepEmpId'>Employee Id: " + emplid + "<br>Department Id: " + deptid + "</div><br>").appendTo(ul);
+                }
+            };
+        });
+
+
+    </script>
+
+}
+
+
+
+
