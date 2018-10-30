@@ -26,7 +26,10 @@ namespace AllocationGenerator.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=esdb-aub01;Database=Interface_Import;User ID=sa;Password=sql@dmin");
+
+                optionsBuilder.UseSqlServer(connectionString, providerOptions => providerOptions.CommandTimeout(60)).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+          
             }
         }
 
@@ -326,6 +329,7 @@ namespace AllocationGenerator.Models
         }
 
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private string connectionString;
 
         public Interface_ImportContext(DbContextOptions<Interface_ImportContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
