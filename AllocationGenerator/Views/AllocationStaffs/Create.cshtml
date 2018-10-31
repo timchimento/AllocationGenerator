@@ -89,7 +89,17 @@
                 select: function (event, ui) {
                     // this is for when select autocomplete item
 
-                    if (ui.item.expirationdate != null) {
+                    var expdate;
+                    var currentdate = new Date();
+
+                    if (ui.item.expirationdate == null) {
+                        expdate = null;
+                    }
+                    else {
+                        expdate = new Date(ui.item.expirationdate);
+                    }
+
+                    if (expdate != null && expdate < currentdate) {
 
                         var fullname = ui.item.firstname.trim() + ' ' + ui.item.lastname.trim();
                         var emplid = ui.item.emplid.trim();
