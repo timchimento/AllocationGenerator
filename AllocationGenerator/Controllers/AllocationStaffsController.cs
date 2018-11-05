@@ -184,14 +184,19 @@ namespace AllocationGenerator.Controllers
 
         public IActionResult StaffSearch(string term)
         {
-            var result = (from S in _context.AllocationStaff
-                          join C in _context.EmployeeCeridian on S.Emplid equals C.EmplId
-                          where S.Emplid.Contains(term) || C.LastName.Contains(term) || C.FirstName.Contains(term)
-                          || C.DeptId.Contains(term)
-                          orderby C.LastName
-                          select new { firstname = C.FirstName, lastname = C.LastName, emplid = S.Emplid, deptid = C.DeptId, expirationdate = S.ExpirationDate, insertdate = C.InsertDate }).ToList().Distinct();
+            var result = (from C in _context.EmployeeCeridian
+                          join S in _context.AllocationStaff on C.EmplId equals S.Emplid
+                          into staffsearch
+                          from emplstaff in staffsearch.DefaultIfEmpty()
+                              where emplstaff.Emplid.Contains(term) || C.LastName.Contains(term) || C.FirstName.Contains(term)
+                              || C.DeptId.Contains(term)
+                              orderby C.LastName
+                          select new { firstname = C.FirstName, lastname = C.LastName, emplid = emplstaff.Emplid, deptid = C.DeptId, expirationdate = emplstaff.ExpirationDate, insertdate = C.InsertDate }).ToList().Distinct();
 
             return Json(result);
+
+
+
         }
     }
 }
